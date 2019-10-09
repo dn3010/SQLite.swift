@@ -420,15 +420,15 @@ public final class Connection {
     ///
     ///       db.trace { SQL in print(SQL) }
     public func trace(_ callback: ((String) -> Void)?) {
-        #if SQLITE_SWIFT_SQLCIPHER || os(Linux)
+//        #if SQLITE_SWIFT_SQLCIPHER || os(Linux)
             trace_v1(callback)
-        #else
-            if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
-                trace_v2(callback)
-            } else {
-                trace_v1(callback)
-            }
-        #endif
+//        #else
+//            if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
+//                trace_v2(callback)
+//            } else {
+//                trace_v1(callback)
+//            }
+//        #endif
     }
 
     fileprivate func trace_v1(_ callback: ((String) -> Void)?) {
@@ -721,35 +721,35 @@ extension Result : CustomStringConvertible {
 #if !SQLITE_SWIFT_SQLCIPHER && !os(Linux)
 @available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *)
 extension Connection {
-    fileprivate func trace_v2(_ callback: ((String) -> Void)?) {
-        guard let callback = callback else {
-            // If the X callback is NULL or if the M mask is zero, then tracing is disabled.
-            sqlite3_trace_v2(handle, 0 /* mask */, nil /* xCallback */, nil /* pCtx */)
-            trace = nil
-            return
-        }
-
-        let box: Trace = { (pointer: UnsafeRawPointer) in
-            callback(String(cString: pointer.assumingMemoryBound(to: UInt8.self)))
-        }
-        sqlite3_trace_v2(handle,
-            UInt32(SQLITE_TRACE_STMT) /* mask */,
-            {
-                // A trace callback is invoked with four arguments: callback(T,C,P,X).
-                // The T argument is one of the SQLITE_TRACE constants to indicate why the
-                // callback was invoked. The C argument is a copy of the context pointer.
-                // The P and X arguments are pointers whose meanings depend on T.
-                (T: UInt32, C: UnsafeMutableRawPointer?, P: UnsafeMutableRawPointer?, X: UnsafeMutableRawPointer?) in
-                    if let P = P,
-                       let expandedSQL = sqlite3_expanded_sql(OpaquePointer(P)) {
-                        unsafeBitCast(C, to: Trace.self)(expandedSQL)
-                        sqlite3_free(expandedSQL)
-                    }
-                    return Int32(0) // currently ignored
-            },
-            unsafeBitCast(box, to: UnsafeMutableRawPointer.self) /* pCtx */
-        )
-        trace = box
-    }
+//    fileprivate func trace_v2(_ callback: ((String) -> Void)?) {
+//        guard let callback = callback else {
+//            // If the X callback is NULL or if the M mask is zero, then tracing is disabled.
+//            sqlite3_trace_v2(handle, 0 /* mask */, nil /* xCallback */, nil /* pCtx */)
+//            trace = nil
+//            return
+//        }
+//
+//        let box: Trace = { (pointer: UnsafeRawPointer) in
+//            callback(String(cString: pointer.assumingMemoryBound(to: UInt8.self)))
+//        }
+//        sqlite3_trace_v2(handle,
+//            UInt32(SQLITE_TRACE_STMT) /* mask */,
+//            {
+//                // A trace callback is invoked with four arguments: callback(T,C,P,X).
+//                // The T argument is one of the SQLITE_TRACE constants to indicate why the
+//                // callback was invoked. The C argument is a copy of the context pointer.
+//                // The P and X arguments are pointers whose meanings depend on T.
+//                (T: UInt32, C: UnsafeMutableRawPointer?, P: UnsafeMutableRawPointer?, X: UnsafeMutableRawPointer?) in
+//                    if let P = P,
+//                       let expandedSQL = sqlite3_expanded_sql(OpaquePointer(P)) {
+//                        unsafeBitCast(C, to: Trace.self)(expandedSQL)
+//                        sqlite3_free(expandedSQL)
+//                    }
+//                    return Int32(0) // currently ignored
+//            },
+//            unsafeBitCast(box, to: UnsafeMutableRawPointer.self) /* pCtx */
+//        )
+//        trace = box
+//    }
 }
 #endif
