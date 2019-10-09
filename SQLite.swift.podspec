@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
     ss.xcconfig = {
       'OTHER_SWIFT_FLAGS' => '$(inherited) -DSQLITE_SWIFT_STANDALONE'
     }
-    ss.dependency 'sqlite3'
+    ss.dependency 'react-native-sqlcipher-storage'
 
     ss.test_spec 'tests' do |test_spec|
       test_spec.resources = 'Tests/SQLiteTests/fixtures/*'
