@@ -75,6 +75,7 @@ Pod::Spec.new do |s|
 
     ss.xcconfig = {
       'OTHER_SWIFT_FLAGS' => '$(inherited) -DSQLITE_SWIFT_RN_CIPHER_STORAGE'
+      'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) SQLITE_SWIFT_RN_CIPHER_STORAG=1'
     }
 
     ss.dependency 'react-native-sqlcipher-storage'
