@@ -24,7 +24,11 @@
 
 @import Foundation;
 
+#if SQLITE_SWIFT_RN_CIPHER_STORAGE
+#import <react_native_sqlcipher_storage/sqlite3.h>
+#else
 #import "sqlite3.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 typedef NSString * _Nullable (^_SQLiteTokenizerNextCallback)(const char *input, int *inputOffset, int *inputLength);

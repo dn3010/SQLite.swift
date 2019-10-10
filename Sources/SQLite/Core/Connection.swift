@@ -25,7 +25,7 @@
 import Foundation
 import Dispatch
 #if SQLITE_SWIFT_STANDALONE
-import sqlite3
+//import sqlite3
 #elseif SQLITE_SWIFT_SQLCIPHER
 import SQLCipher
 #elseif os(Linux)
@@ -106,6 +106,11 @@ public final class Connection {
         let flags = readonly ? SQLITE_OPEN_READONLY : SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE
         try check(sqlite3_open_v2(location.description, &_handle, flags | SQLITE_OPEN_FULLMUTEX, nil))
         queue.setSpecific(key: Connection.queueKey, value: queueContext)
+    }
+  
+    public init(db: OpaquePointer) throws {
+      _handle = db
+      queue.setSpecific(key: Connection.queueKey, value: queueContext)
     }
 
     /// Initializes a new connection to a database.
@@ -415,7 +420,7 @@ public final class Connection {
     ///
     ///       db.trace { SQL in print(SQL) }
     public func trace(_ callback: ((String) -> Void)?) {
-        #if SQLITE_SWIFT_SQLCIPHER || os(Linux)
+        #if SQLITE_SWIFT_SQLCIPHER || os(Linux) || SQLITE_SWIFT_RN_CIPHER_STORAGE
             trace_v1(callback)
         #else
             if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
@@ -713,7 +718,7 @@ extension Result : CustomStringConvertible {
     }
 }
 
-#if !SQLITE_SWIFT_SQLCIPHER && !os(Linux)
+#if !SQLITE_SWIFT_SQLCIPHER && !os(Linux) && !SQLITE_SWIFT_RN_CIPHER_STORAGE
 @available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *)
 extension Connection {
     fileprivate func trace_v2(_ callback: ((String) -> Void)?) {

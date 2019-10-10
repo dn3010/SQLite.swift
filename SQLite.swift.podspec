@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     ss.source_files = 'Sources/{SQLite,SQLiteObjc}/**/*.{c,h,m,swift}'
     ss.exclude_files = 'Sources/**/Cipher.swift'
     ss.private_header_files = 'Sources/SQLiteObjc/*.h'
-    ss.library = 'sqlite3'
+#    ss.library = 'sqlite3'
 
     ss.test_spec 'tests' do |test_spec|
       test_spec.resources = 'Tests/SQLiteTests/fixtures/*'
@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
     ss.xcconfig = {
       'OTHER_SWIFT_FLAGS' => '$(inherited) -DSQLITE_SWIFT_STANDALONE'
     }
-    ss.dependency 'sqlite3'
+#    ss.dependency 'sqlite3'
 
     ss.test_spec 'tests' do |test_spec|
       test_spec.resources = 'Tests/SQLiteTests/fixtures/*'
@@ -60,6 +60,25 @@ Pod::Spec.new do |s|
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) SQLITE_HAS_CODEC=1'
     }
     ss.dependency 'SQLCipher', '>= 3.4.0'
+
+    ss.test_spec 'tests' do |test_spec|
+      test_spec.resources = 'Tests/SQLiteTests/fixtures/*'
+      test_spec.source_files = 'Tests/SQLiteTests/*.swift'
+    end
+  end
+
+  #pods for use with react-native-sqlcipher-storage
+  s.subspec 'RNCipherStorage' do |ss|
+    ss.source_files = 'Sources/{SQLite,SQLiteObjc}/**/*.{c,h,m,swift}'
+    ss.exclude_files = 'Sources/**/Cipher.swift'
+    ss.private_header_files = 'Sources/SQLiteObjc/*.h'
+
+    ss.xcconfig = {
+      'OTHER_SWIFT_FLAGS' => '$(inherited) -DSQLITE_SWIFT_RN_CIPHER_STORAGE',
+      'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) SQLITE_SWIFT_RN_CIPHER_STORAGE=1'
+    }
+
+    ss.dependency 'react-native-sqlcipher-storage'
 
     ss.test_spec 'tests' do |test_spec|
       test_spec.resources = 'Tests/SQLiteTests/fixtures/*'
