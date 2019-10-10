@@ -718,7 +718,7 @@ extension Result : CustomStringConvertible {
     }
 }
 
-#if !SQLITE_SWIFT_SQLCIPHER && !os(Linux)
+#if !SQLITE_SWIFT_SQLCIPHER && !os(Linux) && !SQLITE_SWIFT_RN_CIPHER_STORAGE
 @available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *)
 extension Connection {
     fileprivate func trace_v2(_ callback: ((String) -> Void)?) {
