@@ -559,17 +559,17 @@ public final class Connection {
         let box: Function = { context, argc, argv in
             let arguments: [Binding?] = (0..<Int(argc)).map { idx in
                 let value = argv![idx]
-                switch sqlite3_value_type(value) {
+                switch SQLite3.sqlite3_value_type(value) {
                 case SQLITE_BLOB:
-                    return Blob(bytes: sqlite3_value_blob(value), length: Int(sqlite3_value_bytes(value)))
+                    return Blob(bytes: SQLite3.sqlite3_value_blob(value), length: Int(SQLite3.sqlite3_value_bytes(value)))
                 case SQLITE_FLOAT:
-                    return sqlite3_value_double(value)
+                    return SQLite3.sqlite3_value_double(value)
                 case SQLITE_INTEGER:
-                    return sqlite3_value_int64(value)
+                    return SQLite3.sqlite3_value_int64(value)
                 case SQLITE_NULL:
                     return nil
                 case SQLITE_TEXT:
-                    return String(cString: UnsafePointer(sqlite3_value_text(value)))
+                    return String(cString: UnsafePointer(SQLite3.sqlite3_value_text(value)))
                 case let type:
                     fatalError("unsupported value type: \(type)")
                 }
@@ -592,10 +592,10 @@ public final class Connection {
         var flags = SQLITE_UTF8
         #if !os(Linux)
         if deterministic {
-            flags |= SQLITE_DETERMINISTIC
+            flags |= SQLite3.SQLITE_DETERMINISTIC
         }
         #endif
-        sqlite3_create_function_v2(handle, function, Int32(argc), flags, unsafeBitCast(box, to: UnsafeMutableRawPointer.self), { context, argc, value in
+        SQLite3.sqlite3_create_function_v2(handle, function, Int32(argc), flags, unsafeBitCast(box, to: UnsafeMutableRawPointer.self), { context, argc, value in
             let function = unsafeBitCast(sqlite3_user_data(context), to: Function.self)
             function(context, argc, value)
         }, nil, nil, nil)
